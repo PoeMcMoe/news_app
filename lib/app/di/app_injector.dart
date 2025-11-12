@@ -48,28 +48,24 @@ class AppInjector {
   }
 
   static _setUpSources() {
-    // News List
     getIt.registerLazySingleton<NewsRemoteDataSource>(
       () => NewsRemoteDataSourceImpl(getIt<AppClient>()),
     );
   }
 
   static _setUpRepositories() {
-    // News List
     getIt.registerLazySingleton<NewsRepository>(
       () => NewsRepositoryImpl(getIt<NewsRemoteDataSource>()),
     );
   }
 
   static _setupUseCases() {
-    // News List
     getIt.registerLazySingleton<GetNewsListUseCase>(
       () => GetNewsListUseCase(getIt<NewsRepository>()),
     );
   }
 
   static _setupCubits() {
-    // News List
     getIt.registerFactory<NewsListCubit>(
       () => NewsListCubit(getIt<GetNewsListUseCase>()),
     );
