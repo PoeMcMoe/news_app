@@ -1,35 +1,23 @@
 import 'package:equatable/equatable.dart';
 
-class News extends Equatable {
-  final String id;
+class Article extends Equatable {
   final String title;
   final String description;
   final String? imageUrl;
-  final String source;
   final DateTime publishedAt;
-  final String? author;
-  final String? url;
 
-  const News({
-    required this.id,
+  const Article({
     required this.title,
     required this.description,
     this.imageUrl,
-    required this.source,
     required this.publishedAt,
-    this.author,
-    this.url,
   });
 
   @override
   List<Object?> get props => [
-        id,
         title,
         description,
         imageUrl,
-        source,
         publishedAt,
-        author,
-        url,
       ];
 }

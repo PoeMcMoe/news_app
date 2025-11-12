@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:news_app/features/news_list/2_domain/entities/news.dart';
+import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 
 abstract class NewsListState extends Equatable {
   const NewsListState();
@@ -17,12 +17,12 @@ class NewsListLoading extends NewsListState {
 }
 
 class NewsListLoaded extends NewsListState {
-  final List<News> newsList;
+  final List<Article> articleList;
 
-  const NewsListLoaded(this.newsList);
+  const NewsListLoaded(this.articleList);
 
   @override
-  List<Object?> get props => [newsList];
+  List<Object?> get props => [articleList];
 }
 
 class NewsListError extends NewsListState {

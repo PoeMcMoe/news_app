@@ -2,12 +2,13 @@ import 'package:dartx/dartx.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:news_app/app/client/app_client.dart';
+import 'package:news_app/app/constants.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
-import 'package:news_app/features/news_list/2_domain/repositories/news_repository.dart';
-import 'package:news_app/features/news_list/2_domain/usecases/get_news_list_use_case.dart';
-import 'package:news_app/features/news_list/3_data/datasources/news_remote_data_source.dart';
-import 'package:news_app/features/news_list/3_data/datasources/news_remote_data_source_impl.dart';
-import 'package:news_app/features/news_list/3_data/repositories/news_repository_impl.dart';
+import 'package:news_app/features/news_list/2_domain/repositories/article_repository.dart';
+import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
+import 'package:news_app/features/news_list/3_data/datasources/article_remote_data_source.dart';
+import 'package:news_app/features/news_list/3_data/datasources/article_remote_data_source_impl.dart';
+import 'package:news_app/features/news_list/3_data/repositories/article_repository_impl.dart';
 
 class AppInjector {
   static GetIt getIt = GetIt.instance;
@@ -24,6 +25,7 @@ class AppInjector {
     getIt.registerLazySingleton<Dio>(() {
       final dio = Dio(
         BaseOptions(
+          baseUrl: newsApiBaseUrl,
           connectTimeout: 30.seconds,
           receiveTimeout: 30.seconds,
           sendTimeout: 30.seconds,
@@ -48,26 +50,26 @@ class AppInjector {
   }
 
   static _setUpSources() {
-    getIt.registerLazySingleton<NewsRemoteDataSource>(
-      () => NewsRemoteDataSourceImpl(getIt<AppClient>()),
+    getIt.registerLazySingleton<ArticleRemoteDataSource>(
+      () => ArticleRemoteDataSourceImpl(getIt<AppClient>()),
     );
   }
 
   static _setUpRepositories() {
-    getIt.registerLazySingleton<NewsRepository>(
-      () => NewsRepositoryImpl(getIt<NewsRemoteDataSource>()),
+    getIt.registerLazySingleton<ArticleRepository>(
+      () => ArticleRepositoryImpl(getIt<ArticleRemoteDataSource>()),
     );
   }
 
   static _setupUseCases() {
-    getIt.registerLazySingleton<GetNewsListUseCase>(
-      () => GetNewsListUseCase(getIt<NewsRepository>()),
+    getIt.registerLazySingleton<GetArticleListUseCase>(
+      () => GetArticleListUseCase(getIt<ArticleRepository>()),
     );
   }
 
   static _setupCubits() {
     getIt.registerFactory<NewsListCubit>(
-      () => NewsListCubit(getIt<GetNewsListUseCase>()),
+      () => NewsListCubit(getIt<GetArticleListUseCase>()),
     );
   }
 }
