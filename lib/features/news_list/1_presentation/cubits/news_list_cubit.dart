@@ -11,8 +11,15 @@ class NewsListCubit extends Cubit<NewsListState> {
   Future<void> fetchNewsList() async {
     emit(const NewsListLoading());
 
-    final List<News> news = await getNewsListUseCase();
-
-    emit(NewsListLoaded(news));
+    try {
+      final List<News> news = await getNewsListUseCase();
+      emit(NewsListLoaded(news));
+    } catch (e) {
+      emit(
+        NewsListError(
+          'Failed loading news. Please check your connection and try again.',
+        ),
+      );
+    }
   }
 }
