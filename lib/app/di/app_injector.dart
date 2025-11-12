@@ -2,6 +2,12 @@ import 'package:dartx/dartx.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:news_app/app/client/app_client.dart';
+import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
+import 'package:news_app/features/news_list/2_domain/repositories/news_repository.dart';
+import 'package:news_app/features/news_list/2_domain/usecases/get_news_list_use_case.dart';
+import 'package:news_app/features/news_list/3_data/datasources/news_remote_data_source.dart';
+import 'package:news_app/features/news_list/3_data/datasources/news_remote_data_source_impl.dart';
+import 'package:news_app/features/news_list/3_data/repositories/news_repository_impl.dart';
 
 class AppInjector {
   static GetIt getIt = GetIt.instance;
@@ -11,6 +17,7 @@ class AppInjector {
     _setUpSources();
     _setUpRepositories();
     _setupUseCases();
+    _setupCubits();
   }
 
   static _setupClient() {
@@ -40,9 +47,31 @@ class AppInjector {
     );
   }
 
-  static _setUpSources() {}
+  static _setUpSources() {
+    // News List
+    getIt.registerLazySingleton<NewsRemoteDataSource>(
+      () => NewsRemoteDataSourceImpl(getIt<AppClient>()),
+    );
+  }
 
-  static _setUpRepositories() {}
+  static _setUpRepositories() {
+    // News List
+    getIt.registerLazySingleton<NewsRepository>(
+      () => NewsRepositoryImpl(getIt<NewsRemoteDataSource>()),
+    );
+  }
 
-  static _setupUseCases() {}
+  static _setupUseCases() {
+    // News List
+    getIt.registerLazySingleton<GetNewsListUseCase>(
+      () => GetNewsListUseCase(getIt<NewsRepository>()),
+    );
+  }
+
+  static _setupCubits() {
+    // News List
+    getIt.registerFactory<NewsListCubit>(
+      () => NewsListCubit(getIt<GetNewsListUseCase>()),
+    );
+  }
 }
