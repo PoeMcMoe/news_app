@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:news_app/app/client/app_client.dart';
-import 'package:news_app/core/error/exceptions.dart';
 import 'package:news_app/features/news_list/3_data/datasources/news_remote_data_source.dart';
 import 'package:news_app/features/news_list/3_data/models/news_model.dart';
 
