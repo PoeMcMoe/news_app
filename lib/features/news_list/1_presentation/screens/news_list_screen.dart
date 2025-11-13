@@ -82,9 +82,7 @@ class NewsListScreen extends StatelessWidget {
     label: const Text('Retry'),
   );
 
-  Widget _buildLoadingIndicator() {
-    return const Center(
+  Widget _buildLoadingIndicator() => const Center(
       child: CircularProgressIndicator(),
     );
-  }
 }

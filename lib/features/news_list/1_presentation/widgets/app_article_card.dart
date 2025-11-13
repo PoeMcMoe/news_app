@@ -23,21 +23,17 @@ class AppArticleCard extends StatelessWidget {
     ),
   );
 
-  Widget _buildArticleDetails(BuildContext context) {
-    final dateFormatter = DateFormat('MMM d, yyyy • HH:mm');
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(context),
-          _buildDescription(context),
-          _buildDate(dateFormatter, context),
-        ],
-      ),
-    );
-  }
+  Widget _buildArticleDetails(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildTitle(context),
+        _buildDescription(context),
+        _buildDate(context),
+      ],
+    ),
+  );
 
   Widget _buildImage() => ClipRRect(
     borderRadius: const BorderRadius.vertical(
@@ -96,20 +92,24 @@ class AppArticleCard extends StatelessWidget {
     ),
   );
 
-  Widget _buildDate(DateFormat dateFormatter, BuildContext context) => Row(
-    children: [
-      Icon(
-        Icons.access_time,
-        size: 16.0,
-        color: Colors.grey[600],
-      ),
-      const SizedBox(width: 4.0),
-      Text(
-        dateFormatter.format(article.publishedAt),
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+  Widget _buildDate(BuildContext context) {
+    final dateFormatter = DateFormat('MMM d, yyyy • HH:mm');
+
+    return Row(
+      children: [
+        Icon(
+          Icons.access_time,
+          size: 16.0,
           color: Colors.grey[600],
         ),
-      ),
-    ],
-  );
+        const SizedBox(width: 4.0),
+        Text(
+          dateFormatter.format(article.publishedAt),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
 }
