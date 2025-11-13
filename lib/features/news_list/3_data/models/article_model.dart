@@ -9,8 +9,8 @@ class ArticleModel extends Article {
   final String? urlToImage;
 
   const ArticleModel({
-    required super.title,
-    required super.description,
+    super.title,
+    super.description,
     this.urlToImage,
     required super.publishedAt,
   }) : super(imageUrl: urlToImage);

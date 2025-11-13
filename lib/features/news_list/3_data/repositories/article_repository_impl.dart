@@ -9,7 +9,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
 
   @override
   Future<List<Article>> getArticleList() async {
-    final articleModels = await remoteDataSource.getArticleList();
+    final articleModels = await remoteDataSource.getTopHeadlines();
     return articleModels.map((model) => model.toEntity()).toList();
   }
 }

@@ -7,8 +7,8 @@ part of 'article_model.dart';
 // **************************************************************************
 
 ArticleModel _$ArticleModelFromJson(Map<String, dynamic> json) => ArticleModel(
-  title: json['title'] as String,
-  description: json['description'] as String,
+  title: json['title'] as String?,
+  description: json['description'] as String?,
   urlToImage: json['urlToImage'] as String?,
   publishedAt: DateTime.parse(json['publishedAt'] as String),
 );

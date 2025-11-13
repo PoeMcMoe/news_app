@@ -9,7 +9,7 @@ class ArticleRemoteDataSourceImpl implements ArticleRemoteDataSource {
   ArticleRemoteDataSourceImpl(this.client);
 
   @override
-  Future<List<ArticleModel>> getArticleList() async {
+  Future<List<ArticleModel>> getTopHeadlines() async {
     final response = await client.get(
       '/top-headlines',
       params: {
