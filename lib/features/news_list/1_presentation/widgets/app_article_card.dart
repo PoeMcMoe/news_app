@@ -29,7 +29,7 @@ class AppArticleCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTitle(context),
-        _buildDescription(context),
+        if (article.description?.isNotEmpty == true) _buildDescription(context),
         _buildDate(context),
       ],
     ),
@@ -85,7 +85,7 @@ class AppArticleCard extends StatelessWidget {
   Widget _buildDescription(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
     child: Text(
-      article.description ?? 'No description available',
+      article.description!,
       style: Theme.of(context).textTheme.bodyMedium,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
