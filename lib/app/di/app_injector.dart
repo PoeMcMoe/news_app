@@ -32,15 +32,6 @@ class AppInjector {
         ),
       );
 
-      dio.interceptors.addAll([
-        LogInterceptor(
-          requestBody: true,
-          responseBody: true,
-          requestHeader: true,
-          responseHeader: true,
-        ),
-      ]);
-
       return dio;
     });
 
