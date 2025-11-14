@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 
 class AppArticleCard extends StatelessWidget {
@@ -14,12 +16,16 @@ class AppArticleCard extends StatelessWidget {
   Widget build(BuildContext context) => Card(
     margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
     elevation: 2.0,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (article.imageUrl != null && article.imageUrl!.isNotEmpty) _buildImage(),
-        _buildArticleDetails(context),
-      ],
+    clipBehavior: Clip.hardEdge,
+    child: InkWell(
+      onTap: () => _onCardTap(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (article.urlToImage?.isNotEmpty == true) _buildImage(),
+          _buildArticleDetails(context),
+        ],
+      ),
     ),
   );
 
@@ -29,7 +35,7 @@ class AppArticleCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTitle(context),
-        _buildDescription(context),
+        if (article.description?.isNotEmpty == true) _buildDescription(context),
         _buildDate(context),
       ],
     ),
@@ -40,7 +46,7 @@ class AppArticleCard extends StatelessWidget {
       top: Radius.circular(12.0),
     ),
     child: Image.network(
-      article.imageUrl!,
+      article.urlToImage!,
       width: double.infinity,
       height: 200.0,
       fit: BoxFit.cover,
@@ -85,7 +91,7 @@ class AppArticleCard extends StatelessWidget {
   Widget _buildDescription(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
     child: Text(
-      article.description ?? 'No description available',
+      article.description!,
       style: Theme.of(context).textTheme.bodyMedium,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
@@ -112,4 +118,9 @@ class AppArticleCard extends StatelessWidget {
       ],
     );
   }
+
+  void _onCardTap(BuildContext context) => context.pushNamed(
+    Routes.newDetailsRoute.name!,
+    extra: article,
+  );
 }
