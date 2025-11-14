@@ -13,11 +13,12 @@ class AppArticleCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () => _onCardTap(context),
-    child: Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-      elevation: 2.0,
+  Widget build(BuildContext context) => Card(
+    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+    elevation: 2.0,
+    clipBehavior: Clip.hardEdge,
+    child: InkWell(
+      onTap: () => _onCardTap(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
