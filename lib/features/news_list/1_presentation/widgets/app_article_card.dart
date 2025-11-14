@@ -17,7 +17,7 @@ class AppArticleCard extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (article.imageUrl != null && article.imageUrl!.isNotEmpty) _buildImage(),
+        if (article.urlToImage?.isNotEmpty == true) _buildImage(),
         _buildArticleDetails(context),
       ],
     ),
@@ -40,7 +40,7 @@ class AppArticleCard extends StatelessWidget {
       top: Radius.circular(12.0),
     ),
     child: Image.network(
-      article.imageUrl!,
+      article.urlToImage!,
       width: double.infinity,
       height: 200.0,
       fit: BoxFit.cover,

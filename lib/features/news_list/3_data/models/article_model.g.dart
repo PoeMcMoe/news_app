@@ -11,12 +11,14 @@ ArticleModel _$ArticleModelFromJson(Map<String, dynamic> json) => ArticleModel(
   description: json['description'] as String?,
   urlToImage: json['urlToImage'] as String?,
   publishedAt: DateTime.parse(json['publishedAt'] as String),
+  content: json['content'] as String?,
 );
 
 Map<String, dynamic> _$ArticleModelToJson(ArticleModel instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
-      'publishedAt': instance.publishedAt.toIso8601String(),
+      'content': instance.content,
       'urlToImage': instance.urlToImage,
+      'publishedAt': instance.publishedAt.toIso8601String(),
     };
