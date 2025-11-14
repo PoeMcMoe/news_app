@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 
 class AppArticleCard extends StatelessWidget {
@@ -11,15 +13,18 @@ class AppArticleCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-    elevation: 2.0,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (article.urlToImage?.isNotEmpty == true) _buildImage(),
-        _buildArticleDetails(context),
-      ],
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => _onCardTap(context),
+    child: Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      elevation: 2.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (article.urlToImage?.isNotEmpty == true) _buildImage(),
+          _buildArticleDetails(context),
+        ],
+      ),
     ),
   );
 
@@ -112,4 +117,9 @@ class AppArticleCard extends StatelessWidget {
       ],
     );
   }
+
+  void _onCardTap(BuildContext context) => context.pushNamed(
+    Routes.newDetailsRoute.name!,
+    extra: article,
+  );
 }

@@ -1,8 +1,10 @@
 import 'package:dartx/dartx.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:news_app/app/client/app_client.dart';
 import 'package:news_app/app/constants.dart';
+import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
 import 'package:news_app/features/news_list/2_domain/repositories/article_repository.dart';
 import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
@@ -19,6 +21,7 @@ class AppInjector {
     _setUpRepositories();
     _setupUseCases();
     _setupCubits();
+    _setupRouter();
   }
 
   static _setupClient() {
@@ -61,6 +64,18 @@ class AppInjector {
   static _setupCubits() {
     getIt.registerFactory<NewsListCubit>(
       () => NewsListCubit(getIt<GetArticleListUseCase>()),
+    );
+  }
+
+  static void _setupRouter() {
+    getIt.registerSingleton<GoRouter>(
+      GoRouter(
+        initialLocation: Routes.newsListRoute.path,
+        debugLogDiagnostics: true,
+        routes: [
+          Routes.newsListRoute,
+        ],
+      ),
     );
   }
 }
