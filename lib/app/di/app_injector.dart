@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/app/client/app_client.dart';
 import 'package:news_app/app/constants.dart';
+import 'package:news_app/app/helpers/url_launcher_helper.dart';
 import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/2_domain/repositories/article_repository.dart';
 import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
@@ -16,6 +17,7 @@ class AppInjector {
 
   static Future<void> setupInjector() async {
     _setupClient();
+    _setupHelpers();
     _setUpSources();
     _setUpRepositories();
     _setupUseCases();
@@ -39,6 +41,10 @@ class AppInjector {
     getIt.registerLazySingleton<AppClient>(
       () => AppClient(getIt<Dio>()),
     );
+  }
+
+  static void _setupHelpers() {
+    getIt.registerLazySingleton<UrlLauncherHelper>(() => UrlLauncherHelper());
   }
 
   static _setUpSources() {

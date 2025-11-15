@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 import 'package:news_app/features/news_list/4_features/news_details/1_presentation/cubits/news_details_cubit.dart';
+import 'package:news_app/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsDetailsScreen extends StatelessWidget {
@@ -15,7 +16,10 @@ class NewsDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NewsDetailsCubit>(
-      create: (_) => NewsDetailsCubit(article: article),
+      create: (_) => NewsDetailsCubit(
+        article: article,
+        urlLauncherHelper: getIt(),
+      ),
       child: Scaffold(
         floatingActionButton: _buildReadArticleFAB(context),
         body: CustomScrollView(
