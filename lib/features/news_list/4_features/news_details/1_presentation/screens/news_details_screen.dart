@@ -1,8 +1,8 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:news_app/app/context_extensions.dart';
+import 'package:news_app/features/news_list/1_presentation/widgets/app_date_row.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 import 'package:news_app/features/news_list/4_features/news_details/1_presentation/cubits/news_details_cubit.dart';
 import 'package:news_app/features/news_list/4_features/news_details/1_presentation/cubits/news_details_state.dart';
@@ -112,7 +112,7 @@ class _NewsDetailsScreenBase extends StatelessWidget {
     Article article,
   ) => SliverToBoxAdapter(
     child: Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 128.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,31 +138,12 @@ class _NewsDetailsScreenBase extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (article.author?.isNotEmpty == true) _buildAuthorRow(context, article),
-        _buildDateRow(context, article),
+        _buildDateRow(article),
       ],
     ),
   );
 
-  Widget _buildDateRow(BuildContext context, Article article) {
-    return Row(
-      children: [
-        Icon(
-          Icons.access_time_outlined,
-          size: 20.0,
-          color: context.colorScheme.onSurfaceVariant,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            DateFormat('MMMM d, yyyy • HH:mm').format(article.publishedAt),
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildDateRow(Article article) => AppDateRow(date: article.publishedAt);
 
   Widget _buildAuthorRow(BuildContext context, Article article) => Padding(
     padding: const EdgeInsets.only(bottom: 8.0),
@@ -170,18 +151,13 @@ class _NewsDetailsScreenBase extends StatelessWidget {
       children: [
         Icon(
           Icons.person_outline,
-          size: 20.0,
-          color: context.colorScheme.onSurfaceVariant,
+          size: 16.0,
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              article.author!,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
+          child: Text(
+            article.author!,
+            style: context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

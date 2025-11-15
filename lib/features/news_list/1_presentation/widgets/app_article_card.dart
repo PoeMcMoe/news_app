@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/app/routes.dart';
+import 'package:news_app/features/news_list/1_presentation/widgets/app_date_row.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 
 class AppArticleCard extends StatelessWidget {
@@ -37,7 +38,7 @@ class AppArticleCard extends StatelessWidget {
       children: [
         _buildTitle(context),
         if (article.description?.isNotEmpty == true) _buildDescription(context),
-        _buildDate(context),
+        _buildDate(),
       ],
     ),
   );
@@ -99,26 +100,7 @@ class AppArticleCard extends StatelessWidget {
     ),
   );
 
-  Widget _buildDate(BuildContext context) {
-    final dateFormatter = DateFormat('MMM d, yyyy • HH:mm');
-
-    return Row(
-      children: [
-        Icon(
-          Icons.access_time,
-          size: 16.0,
-          color: Colors.grey[600],
-        ),
-        const SizedBox(width: 4.0),
-        Text(
-          dateFormatter.format(article.publishedAt),
-          style: context.textTheme.bodySmall?.copyWith(
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildDate() => AppDateRow(date: article.publishedAt);
 
   void _onCardTap(BuildContext context) => context.pushNamed(
     Routes.newDetailsRoute.name!,
