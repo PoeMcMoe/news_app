@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_state.dart';
 import 'package:news_app/features/news_list/1_presentation/widgets/app_article_card.dart';
+import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
 import 'package:news_app/main.dart';
 
 class NewsListScreen extends StatelessWidget {
@@ -11,7 +13,9 @@ class NewsListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<NewsListCubit>()..fetchNewsList(),
+      create: (context) => NewsListCubit(
+        getArticleListUseCase: getIt<GetArticleListUseCase>(),
+      )..fetchNewsList(),
       child: Scaffold(
         appBar: _buildAppBar(),
         body: BlocBuilder<NewsListCubit, NewsListState>(
@@ -72,7 +76,7 @@ class NewsListScreen extends StatelessWidget {
     child: Text(
       state.message,
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyLarge,
+      style: context.textTheme.bodyLarge,
     ),
   );
 
@@ -83,6 +87,6 @@ class NewsListScreen extends StatelessWidget {
   );
 
   Widget _buildLoadingIndicator() => const Center(
-      child: CircularProgressIndicator(),
-    );
+    child: CircularProgressIndicator(),
+  );
 }

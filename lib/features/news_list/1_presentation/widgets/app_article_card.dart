@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 
@@ -83,7 +84,7 @@ class AppArticleCard extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) => Text(
     article.title ?? 'No title',
-    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+    style: context.textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.bold,
     ),
   );
@@ -92,7 +93,7 @@ class AppArticleCard extends StatelessWidget {
     padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
     child: Text(
       article.description!,
-      style: Theme.of(context).textTheme.bodyMedium,
+      style: context.textTheme.bodyMedium,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
     ),
@@ -111,7 +112,7 @@ class AppArticleCard extends StatelessWidget {
         const SizedBox(width: 4.0),
         Text(
           dateFormatter.format(article.publishedAt),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          style: context.textTheme.bodySmall?.copyWith(
             color: Colors.grey[600],
           ),
         ),

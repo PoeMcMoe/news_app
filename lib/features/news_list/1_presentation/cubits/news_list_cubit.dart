@@ -6,7 +6,7 @@ import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_u
 class NewsListCubit extends Cubit<NewsListState> {
   final GetArticleListUseCase getArticleListUseCase;
 
-  NewsListCubit(this.getArticleListUseCase) : super(const NewsListInitial());
+  NewsListCubit({required this.getArticleListUseCase}) : super(const NewsListInitial());
 
   Future<void> fetchNewsList() async {
     emit(const NewsListLoading());

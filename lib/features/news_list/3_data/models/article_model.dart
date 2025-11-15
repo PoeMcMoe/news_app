@@ -9,6 +9,8 @@ class ArticleModel extends Article {
     required super.title,
     required super.description,
     required super.urlToImage,
+    required super.url,
+    required super.author,
     required super.publishedAt,
     required super.content,
   });
@@ -22,6 +24,8 @@ class ArticleModel extends Article {
     description: description,
     content: content,
     urlToImage: urlToImage,
+    url: url,
+    author: author,
     publishedAt: publishedAt,
   );
 }
