@@ -4,8 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/app/client/app_client.dart';
 import 'package:news_app/app/constants.dart';
+import 'package:news_app/app/helpers/url_launcher_helper.dart';
 import 'package:news_app/app/routes.dart';
-import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
 import 'package:news_app/features/news_list/2_domain/repositories/article_repository.dart';
 import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
 import 'package:news_app/features/news_list/3_data/datasources/article_remote_data_source.dart';
@@ -17,10 +17,10 @@ class AppInjector {
 
   static Future<void> setupInjector() async {
     _setupClient();
+    _setupHelpers();
     _setUpSources();
     _setUpRepositories();
     _setupUseCases();
-    _setupCubits();
     _setupRouter();
   }
 
@@ -43,6 +43,10 @@ class AppInjector {
     );
   }
 
+  static void _setupHelpers() {
+    getIt.registerLazySingleton<UrlLauncherHelper>(() => UrlLauncherHelper());
+  }
+
   static _setUpSources() {
     getIt.registerLazySingleton<ArticleRemoteDataSource>(
       () => ArticleRemoteDataSourceImpl(getIt<AppClient>()),
@@ -58,12 +62,6 @@ class AppInjector {
   static _setupUseCases() {
     getIt.registerLazySingleton<GetArticleListUseCase>(
       () => GetArticleListUseCase(getIt<ArticleRepository>()),
-    );
-  }
-
-  static _setupCubits() {
-    getIt.registerFactory<NewsListCubit>(
-      () => NewsListCubit(getIt<GetArticleListUseCase>()),
     );
   }
 

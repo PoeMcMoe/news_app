@@ -5,6 +5,8 @@ class Article extends Equatable {
   final String? description;
   final String? content;
   final String? urlToImage;
+  final String? url;
+  final String? author;
   final DateTime publishedAt;
 
   const Article({
@@ -12,6 +14,8 @@ class Article extends Equatable {
     required this.description,
     required this.content,
     required this.urlToImage,
+    required this.url,
+    required this.author,
     required this.publishedAt,
   });
 
@@ -21,6 +25,8 @@ class Article extends Equatable {
     description,
     content,
     urlToImage,
+    url,
+    author,
     publishedAt,
   ];
 }
