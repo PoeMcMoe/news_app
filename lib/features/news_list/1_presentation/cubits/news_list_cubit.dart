@@ -4,13 +4,15 @@ import 'package:news_app/features/news_list/1_presentation/cubits/news_list_stat
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
 
-const int _articlesPageSize = 20;
+const int _articlesPageSize = 10;
+const int _maxArticles = 30;
 
 class NewsListCubit extends Cubit<NewsListState> {
   final GetArticleListUseCase getArticleListUseCase;
 
   final List<Article> _currentArticles = [];
   int _pageIndex = 1;
+  bool _isLoadingMore = false;
 
   NewsListCubit({required this.getArticleListUseCase}) : super(const NewsListLoading());
 
@@ -36,6 +38,14 @@ class NewsListCubit extends Cubit<NewsListState> {
   }
 
   Future<void> loadMoreNews() async {
+    if (_isLoadingMore) return;
+    _isLoadingMore = true;
+
+    if (_currentArticles.length >= _maxArticles) {
+      emit(NewsListMaxReached(articles: _currentArticles));
+      return;
+    }
+
     emit(NewsListLoadingMore(articles: _currentArticles));
 
     try {
@@ -46,7 +56,11 @@ class NewsListCubit extends Cubit<NewsListState> {
 
       _currentArticles.addAll(newArticles);
 
-      emit(NewsListLoaded(articles: _currentArticles));
+      if (_currentArticles.length >= _maxArticles) {
+        emit(NewsListMaxReached(articles: _currentArticles));
+      } else {
+        emit(NewsListLoaded(articles: _currentArticles));
+      }
     } catch (e) {
       debugPrint('NewsListCubit. loadMoreNews failed: $e');
       emit(
@@ -55,6 +69,8 @@ class NewsListCubit extends Cubit<NewsListState> {
           'Please check your connection and try again.',
         ),
       );
+    } finally {
+      _isLoadingMore = false;
     }
   }
 }

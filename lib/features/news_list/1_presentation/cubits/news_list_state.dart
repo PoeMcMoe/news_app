@@ -44,3 +44,12 @@ class NewsListError extends NewsListState {
   @override
   List<Object?> get props => [message];
 }
+
+class NewsListMaxReached extends NewsListState {
+  final List<Article> articles;
+
+  const NewsListMaxReached({required this.articles});
+
+  @override
+  List<Object?> get props => [articles];
+}

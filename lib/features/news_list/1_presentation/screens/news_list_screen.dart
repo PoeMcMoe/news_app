@@ -45,7 +45,9 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
   }
 
   void _onScroll() {
-    if (_isNearBottom) {
+    final state = context.read<NewsListCubit>().state;
+
+    if (_isNearBottom && state is! NewsListMaxReached) {
       context.read<NewsListCubit>().loadMoreNews();
     }
   }
@@ -71,6 +73,11 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
           articles,
           isLoadingMore: true,
         ),
+        NewsListMaxReached(:final articles) => _buildNewsList(
+          context,
+          articles,
+          hasReachedMax: true,
+        ),
       },
     ),
   );
@@ -84,20 +91,33 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
     BuildContext context,
     List<Article> articles, {
     bool isLoadingMore = false,
+    bool hasReachedMax = false,
   }) => RefreshIndicator(
     onRefresh: () => context.read<NewsListCubit>().fetchNewsList(),
     child: ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(8.0),
       itemCount: articles.length + 1,
-      itemBuilder: (_, index) => _buildListItem(index, articles, isLoadingMore),
+      itemBuilder: (_, index) => _buildListItem(
+        index,
+        articles,
+        isLoadingMore,
+        hasReachedMax,
+      ),
     ),
   );
 
-  Widget _buildListItem(int index, List<Article> articles, bool isLoadingMore) {
+  Widget _buildListItem(
+    int index,
+    List<Article> articles,
+    bool isLoadingMore,
+    bool hasReachedMax,
+  ) {
     if (index == articles.length) {
       if (isLoadingMore) {
         return _buildBottomLoadingIndicator();
+      } else if (hasReachedMax) {
+        return _buildMaxReachedMessage();
       } else {
         return const SizedBox.shrink();
       }
@@ -109,6 +129,20 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
     padding: EdgeInsets.all(16.0),
     child: Center(
       child: CircularProgressIndicator(),
+    ),
+  );
+
+  Widget _buildMaxReachedMessage() => Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Center(
+      child: Text(
+        'Maximum articles limit reached',
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 14.0,
+        ),
+        textAlign: TextAlign.center,
+      ),
     ),
   );
 
