@@ -15,7 +15,8 @@ class NewsDetailsCubit extends Cubit<NewsDetailsState> {
 
   Future<void> launchArticleUrl() async {
     try {
-      //If URL is empty fab should not built leaving the user with no way to trigger this
+      //If URL is empty fab should not built
+      // leaving the user with no way to trigger this, hence the null check
       await urlLauncherHelper.openUrl(article.url!);
     } catch (exception, stack) {
       debugPrint(
@@ -23,6 +24,8 @@ class NewsDetailsCubit extends Cubit<NewsDetailsState> {
       );
       emit(
         NewsDetailsError(
+          //Subsequent errors were not being displayed so I added the errorId
+          errorId: UniqueKey().toString(),
           article: article,
           message: 'Url could not be opened.',
         ),
