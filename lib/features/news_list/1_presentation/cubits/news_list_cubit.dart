@@ -7,7 +7,6 @@ import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_u
 const int _articlesPageSize = 20;
 
 class NewsListCubit extends Cubit<NewsListState> {
-
   final GetArticleListUseCase getArticleListUseCase;
 
   final List<Article> _currentArticles = [];
