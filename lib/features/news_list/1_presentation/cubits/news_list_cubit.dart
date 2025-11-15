@@ -12,18 +12,23 @@ class NewsListCubit extends Cubit<NewsListState> {
 
   final List<Article> _currentArticles = [];
   int _pageIndex = 1;
-  bool _isLoadingMore = false;
 
   NewsListCubit({required this.getArticleListUseCase}) : super(const NewsListLoading());
 
-  Future<void> fetchNewsList() async {
-    emit(const NewsListLoading());
-
+  Future<void> fetchNewsList({bool isRefresh = false}) async {
     try {
+      emit(const NewsListLoading());
+
+      if (isRefresh) {
+        _currentArticles.clear();
+        _pageIndex = 1;
+      }
+
       final List<Article> articles = await getArticleListUseCase(
-        page: _pageIndex,
+        page: _pageIndex++,
         pageSize: _articlesPageSize,
       );
+
       _currentArticles.addAll(articles);
 
       emit(NewsListLoaded(articles: articles));
@@ -38,9 +43,6 @@ class NewsListCubit extends Cubit<NewsListState> {
   }
 
   Future<void> loadMoreNews() async {
-    if (_isLoadingMore) return;
-    _isLoadingMore = true;
-
     if (_currentArticles.length >= _maxArticles) {
       emit(NewsListMaxReached(articles: _currentArticles));
       return;
@@ -50,7 +52,7 @@ class NewsListCubit extends Cubit<NewsListState> {
 
     try {
       final List<Article> newArticles = await getArticleListUseCase(
-        page: ++_pageIndex,
+        page: _pageIndex++,
         pageSize: _articlesPageSize,
       );
 
@@ -69,8 +71,6 @@ class NewsListCubit extends Cubit<NewsListState> {
           'Please check your connection and try again.',
         ),
       );
-    } finally {
-      _isLoadingMore = false;
     }
   }
 }

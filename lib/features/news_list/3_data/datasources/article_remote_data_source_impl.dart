@@ -14,7 +14,7 @@ class ArticleRemoteDataSourceImpl implements ArticleRemoteDataSource {
     required int page,
     required int pageSize,
   }) async {
-    // print('Making call page:$page, pageSize:$pageSize');
+    print('Making call page:$page, pageSize:$pageSize');
     // await Future.delayed(1.seconds);
     //
     // return List.generate(

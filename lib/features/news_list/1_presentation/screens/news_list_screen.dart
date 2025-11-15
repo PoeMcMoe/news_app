@@ -47,7 +47,7 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
   void _onScroll() {
     final state = context.read<NewsListCubit>().state;
 
-    if (_isNearBottom && state is! NewsListMaxReached) {
+    if (_isNearBottom && state is! NewsListMaxReached && state is! NewsListLoadingMore) {
       context.read<NewsListCubit>().loadMoreNews();
     }
   }
@@ -179,7 +179,7 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
   );
 
   Widget _buildRetryButton(BuildContext context) => ElevatedButton.icon(
-    onPressed: () => context.read<NewsListCubit>().fetchNewsList(),
+    onPressed: () => context.read<NewsListCubit>().fetchNewsList(isRefresh: true),
     icon: const Icon(Icons.refresh),
     label: const Text('Retry'),
   );
