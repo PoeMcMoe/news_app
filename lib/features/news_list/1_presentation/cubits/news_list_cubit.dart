@@ -1,10 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_state.dart';
 import 'package:news_app/features/news_list/2_domain/entities/article.dart';
 import 'package:news_app/features/news_list/2_domain/usecases/get_article_list_use_case.dart';
 
+const int _articlesPageSize = 20;
+
 class NewsListCubit extends Cubit<NewsListState> {
+
   final GetArticleListUseCase getArticleListUseCase;
+
+  final List<Article> _currentArticles = [];
+  int _pageIndex = 1;
 
   NewsListCubit({required this.getArticleListUseCase}) : super(const NewsListLoading());
 
@@ -12,12 +19,41 @@ class NewsListCubit extends Cubit<NewsListState> {
     emit(const NewsListLoading());
 
     try {
-      final List<Article> articles = await getArticleListUseCase();
-      emit(NewsListLoaded(articles));
+      final List<Article> articles = await getArticleListUseCase(
+        page: _pageIndex,
+        pageSize: _articlesPageSize,
+      );
+      _currentArticles.addAll(articles);
+
+      emit(NewsListLoaded(articles: articles));
     } catch (e) {
+      debugPrint('NewsListCubit. fetchNewsList failed: $e');
+      emit(
+        const NewsListError(
+          'Failed loading news. Please check your connection and try again.',
+        ),
+      );
+    }
+  }
+
+  Future<void> loadMoreNews() async {
+    emit(NewsListLoadingMore(articles: _currentArticles));
+
+    try {
+      final List<Article> newArticles = await getArticleListUseCase(
+        page: ++_pageIndex,
+        pageSize: _articlesPageSize,
+      );
+
+      _currentArticles.addAll(newArticles);
+
+      emit(NewsListLoaded(articles: _currentArticles));
+    } catch (e) {
+      debugPrint('NewsListCubit. loadMoreNews failed: $e');
       emit(
         NewsListError(
-          'Failed loading news. Please check your connection and try again.',
+          'Failed loading more news. '
+          'Please check your connection and try again.',
         ),
       );
     }

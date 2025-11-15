@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/app/routes.dart';
 import 'package:news_app/features/news_list/1_presentation/widgets/app_date_row.dart';
