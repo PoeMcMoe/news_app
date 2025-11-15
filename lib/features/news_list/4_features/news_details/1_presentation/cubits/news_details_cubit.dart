@@ -21,7 +21,12 @@ class NewsDetailsCubit extends Cubit<NewsDetailsState> {
       debugPrint(
         'NewsDetailsCubit. launchArticleUrl failed: $exception,\n$stack',
       );
-      emit(NewsDetailsError('Url could not be opened.'));
+      emit(
+        NewsDetailsError(
+          article: article,
+          message: 'Url could not be opened.',
+        ),
+      );
     }
   }
 }
