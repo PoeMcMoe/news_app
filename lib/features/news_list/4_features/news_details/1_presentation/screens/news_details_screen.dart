@@ -1,5 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/features/news_list/1_presentation/widgets/app_date_row.dart';
@@ -181,6 +182,18 @@ class _NewsDetailsScreenBase extends StatelessWidget {
           icon: const Icon(Icons.open_in_new),
           label: const Text('Read Full Article'),
         )
+          .animate()
+          .scale(
+            begin: const Offset(0.5, 0.5),
+            end: const Offset(1.0, 1.0),
+            duration: 400.ms,
+            delay: 200.ms,
+            curve: Curves.easeOutBack,
+          )
+          .fadeIn(
+            duration: 300.ms,
+            delay: 200.ms,
+          )
       : null;
 
   void _showErrorSnackBar(BuildContext context, String message) {
