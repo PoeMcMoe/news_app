@@ -21,20 +21,15 @@ class NewsListCubit extends Cubit<NewsListState> {
       emit(const NewsListLoading());
 
       if (isRefresh) {
-        _currentArticles.clear();
-        _pageIndex = 1;
+        _resetPagination();
       }
 
-      final List<Article> articles = await getArticleListUseCase(
-        page: _pageIndex++,
-        pageSize: _articlesPageSize,
-      );
-
+      final List<Article> articles = await _loadNextPage();
       _currentArticles.addAll(articles);
 
       emit(NewsListLoaded(articles: _currentArticles));
-    } catch (e) {
-      debugPrint('NewsListCubit. fetchNewsList failed: $e');
+    } catch (error) {
+      debugPrint('NewsListCubit. fetchNewsList failed: $error');
       emit(
         const NewsListError(
           'Failed loading news. Please check your connection and try again.',
@@ -43,33 +38,36 @@ class NewsListCubit extends Cubit<NewsListState> {
     }
   }
 
+  Future<List<Article>> _loadNextPage() async {
+    return await getArticleListUseCase(
+      page: _pageIndex++,
+      pageSize: _articlesPageSize,
+    );
+  }
+
+  void _resetPagination() {
+    _currentArticles.clear();
+    _pageIndex = 1;
+  }
+
   Future<void> loadMoreNews() async {
-    if (_isLoadingMore) return;
-    _isLoadingMore = true;
-
-    if (_currentArticles.length + _articlesPageSize >= _maxArticles) {
-      emit(NewsListMaxReached(articles: _currentArticles));
-      _isLoadingMore = false;
-      return;
-    }
-
-    emit(NewsListLoadingMore(articles: _currentArticles));
-
     try {
-      final List<Article> newArticles = await getArticleListUseCase(
-        page: _pageIndex++,
-        pageSize: _articlesPageSize,
-      );
+      var maxArticlesReached = _currentArticles.length + _articlesPageSize > _maxArticles;
+      if (_isLoadingMore || maxArticlesReached) return;
+      _isLoadingMore = true;
 
+      emit(NewsListLoadingMore(articles: _currentArticles));
+
+      final List<Article> newArticles = await _loadNextPage();
       _currentArticles.addAll(newArticles);
 
-      if (_currentArticles.length >= _maxArticles) {
+      if (maxArticlesReached) {
         emit(NewsListMaxReached(articles: _currentArticles));
       } else {
         emit(NewsListLoaded(articles: _currentArticles));
       }
-    } catch (e) {
-      debugPrint('NewsListCubit. loadMoreNews failed: $e');
+    } catch (error) {
+      debugPrint('NewsListCubit. loadMoreNews failed: $error');
       emit(
         NewsListError(
           'Failed loading more news. '
