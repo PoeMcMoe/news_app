@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/app/context_extensions.dart';
 import 'package:news_app/features/news_list/1_presentation/cubits/news_list_cubit.dart';
@@ -125,7 +126,18 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
         return const SizedBox.shrink();
       }
     }
-    return AppArticleCard(article: articles[index]);
+    return AppArticleCard(article: articles[index])
+        .animate()
+        .fadeIn(
+          duration: 300.ms,
+          delay: (index * 50).clamp(0, 300).ms,
+        )
+        .slideY(
+          begin: 0.1,
+          end: 0,
+          duration: 300.ms,
+          delay: (index * 50).clamp(0, 300).ms,
+        );
   }
 
   Widget _buildBottomLoadingIndicator() => const Padding(
