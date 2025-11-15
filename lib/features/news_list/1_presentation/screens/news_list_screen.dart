@@ -17,18 +17,63 @@ class NewsListScreen extends StatelessWidget {
       create: (context) => NewsListCubit(
         getArticleListUseCase: getIt<GetArticleListUseCase>(),
       )..fetchNewsList(),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: BlocBuilder<NewsListCubit, NewsListState>(
-          builder: (context, state) => switch (state) {
-            NewsListLoading() => _buildLoadingIndicator(),
-            NewsListLoaded(:final articles) => _buildNewsList(context, articles),
-            NewsListError(:final message) => _buildError(context, message),
-          },
-        ),
-      ),
+      child: _NewsListScreenBase(),
     );
   }
+}
+
+class _NewsListScreenBase extends StatefulWidget {
+  const _NewsListScreenBase();
+
+  @override
+  State<_NewsListScreenBase> createState() => _NewsListScreenBaseState();
+}
+
+class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isNearBottom) {
+      context.read<NewsListCubit>().loadMoreNews();
+    }
+  }
+
+  bool get _isNearBottom {
+    if (!_scrollController.hasClients) return false;
+    final double maxScroll = _scrollController.position.maxScrollExtent;
+    final double currentScroll = _scrollController.position.pixels;
+
+    return currentScroll >= maxScroll - 200;
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: _buildAppBar(),
+    body: BlocBuilder<NewsListCubit, NewsListState>(
+      builder: (context, state) => switch (state) {
+        NewsListLoading() => _buildLoadingIndicator(),
+        NewsListLoaded(:final articles) => _buildNewsList(context, articles),
+        NewsListError(:final message) => _buildError(context, message),
+        NewsListLoadingMore(:final articles) => _buildNewsList(
+          context,
+          articles,
+          isLoadingMore: true,
+        ),
+      },
+    ),
+  );
 
   PreferredSizeWidget _buildAppBar() => AppBar(
     title: const Text('News'),
@@ -37,13 +82,33 @@ class NewsListScreen extends StatelessWidget {
 
   Widget _buildNewsList(
     BuildContext context,
-    List<Article> articles,
-  ) => RefreshIndicator(
+    List<Article> articles, {
+    bool isLoadingMore = false,
+  }) => RefreshIndicator(
     onRefresh: () => context.read<NewsListCubit>().fetchNewsList(),
     child: ListView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.all(8.0),
-      itemCount: articles.length,
-      itemBuilder: (_, index) => AppArticleCard(article: articles[index]),
+      itemCount: articles.length + 1,
+      itemBuilder: (_, index) => _buildListItem(index, articles, isLoadingMore),
+    ),
+  );
+
+  Widget _buildListItem(int index, List<Article> articles, bool isLoadingMore) {
+    if (index == articles.length) {
+      if (isLoadingMore) {
+        return _buildBottomLoadingIndicator();
+      } else {
+        return const SizedBox.shrink();
+      }
+    }
+    return AppArticleCard(article: articles[index]);
+  }
+
+  Widget _buildBottomLoadingIndicator() => const Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Center(
+      child: CircularProgressIndicator(),
     ),
   );
 
