@@ -17,18 +17,73 @@ class NewsListScreen extends StatelessWidget {
       create: (context) => NewsListCubit(
         getArticleListUseCase: getIt<GetArticleListUseCase>(),
       )..fetchNewsList(),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: BlocBuilder<NewsListCubit, NewsListState>(
-          builder: (context, state) => switch (state) {
-            NewsListLoading() => _buildLoadingIndicator(),
-            NewsListLoaded(:final articles) => _buildNewsList(context, articles),
-            NewsListError(:final message) => _buildError(context, message),
-          },
-        ),
-      ),
+      child: _NewsListScreenBase(),
     );
   }
+}
+
+class _NewsListScreenBase extends StatefulWidget {
+  const _NewsListScreenBase();
+
+  @override
+  State<_NewsListScreenBase> createState() => _NewsListScreenBaseState();
+}
+
+class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<NewsListCubit>().state;
+
+      if (_isNearScrollBottom && state is! NewsListMaxReached) {
+        context.read<NewsListCubit>().loadMoreNews();
+      }
+    });
+  }
+
+  bool get _isNearScrollBottom {
+    if (!_scrollController.hasClients) return false;
+
+    final double maxScrollExtent = _scrollController.position.maxScrollExtent;
+    final double offset = _scrollController.offset;
+
+    return maxScrollExtent > 0 && offset >= maxScrollExtent - 200;
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: _buildAppBar(),
+    body: BlocBuilder<NewsListCubit, NewsListState>(
+      builder: (context, state) => switch (state) {
+        NewsListLoading() => _buildLoadingIndicator(),
+        NewsListLoaded(:final articles) => _buildNewsList(context, articles),
+        NewsListError(:final message) => _buildError(context, message),
+        NewsListLoadingMore(:final articles) => _buildNewsList(
+          context,
+          articles,
+          isLoadingMore: true,
+        ),
+        NewsListMaxReached(:final articles) => _buildNewsList(
+          context,
+          articles,
+          hasReachedMax: true,
+        ),
+      },
+    ),
+  );
 
   PreferredSizeWidget _buildAppBar() => AppBar(
     title: const Text('News'),
@@ -37,13 +92,60 @@ class NewsListScreen extends StatelessWidget {
 
   Widget _buildNewsList(
     BuildContext context,
-    List<Article> articles,
-  ) => RefreshIndicator(
+    List<Article> articles, {
+    bool isLoadingMore = false,
+    bool hasReachedMax = false,
+  }) => RefreshIndicator(
     onRefresh: () => context.read<NewsListCubit>().fetchNewsList(),
     child: ListView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.all(8.0),
-      itemCount: articles.length,
-      itemBuilder: (_, index) => AppArticleCard(article: articles[index]),
+      itemCount: articles.length + 1,
+      itemBuilder: (_, index) => _buildListItem(
+        index,
+        articles,
+        isLoadingMore,
+        hasReachedMax,
+      ),
+    ),
+  );
+
+  Widget _buildListItem(
+    int index,
+    List<Article> articles,
+    bool isLoadingMore,
+    bool hasReachedMax,
+  ) {
+    if (index == articles.length) {
+      if (isLoadingMore) {
+        return _buildBottomLoadingIndicator();
+      } else if (hasReachedMax) {
+        return _buildMaxReachedMessage();
+      } else {
+        return const SizedBox.shrink();
+      }
+    }
+    return AppArticleCard(article: articles[index]);
+  }
+
+  Widget _buildBottomLoadingIndicator() => const Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Center(
+      child: CircularProgressIndicator(),
+    ),
+  );
+
+  Widget _buildMaxReachedMessage() => Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Center(
+      child: Text(
+        'Maximum articles limit reached',
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 14.0,
+        ),
+        textAlign: TextAlign.center,
+      ),
     ),
   );
 
@@ -80,7 +182,7 @@ class NewsListScreen extends StatelessWidget {
   );
 
   Widget _buildRetryButton(BuildContext context) => ElevatedButton.icon(
-    onPressed: () => context.read<NewsListCubit>().fetchNewsList(),
+    onPressed: () => context.read<NewsListCubit>().fetchNewsList(isRefresh: true),
     icon: const Icon(Icons.refresh),
     label: const Text('Retry'),
   );

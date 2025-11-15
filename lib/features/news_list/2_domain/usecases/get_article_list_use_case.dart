@@ -6,7 +6,13 @@ class GetArticleListUseCase {
 
   GetArticleListUseCase(this.repository);
 
-  Future<List<Article>> call() async {
-    return await repository.getArticleList();
+  Future<List<Article>> call({
+    required int page,
+    required int pageSize,
+  }) async {
+    return await repository.getArticleList(
+      page: page,
+      pageSize: pageSize,
+    );
   }
 }

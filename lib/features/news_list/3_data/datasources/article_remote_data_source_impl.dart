@@ -9,12 +9,17 @@ class ArticleRemoteDataSourceImpl implements ArticleRemoteDataSource {
   ArticleRemoteDataSourceImpl(this.client);
 
   @override
-  Future<List<ArticleModel>> getTopHeadlines() async {
+  Future<List<ArticleModel>> getTopHeadlines({
+    required int page,
+    required int pageSize,
+  }) async {
     final response = await client.get(
       '/top-headlines',
       params: {
         'country': 'us',
         'apiKey': newsApiKey,
+        'page': page.toString(),
+        'pageSize': pageSize.toString(),
       },
     );
     final List<dynamic> data = response.data['articles'] ?? [];

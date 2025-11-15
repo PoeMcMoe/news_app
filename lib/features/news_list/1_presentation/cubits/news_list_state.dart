@@ -12,10 +12,25 @@ class NewsListLoading extends NewsListState {
   const NewsListLoading();
 }
 
+class NewsListLoadingMore extends NewsListState {
+  final List<Article> articles;
+
+  const NewsListLoadingMore({required this.articles});
+}
+
 class NewsListLoaded extends NewsListState {
   final List<Article> articles;
 
-  const NewsListLoaded(this.articles);
+  const NewsListLoaded({
+    required this.articles,
+  });
+
+  NewsListLoaded copyWith({
+    List<Article>? articles,
+    int? currentPage,
+  }) => NewsListLoaded(
+    articles: articles ?? this.articles,
+  );
 
   @override
   List<Object?> get props => [articles];
@@ -28,4 +43,13 @@ class NewsListError extends NewsListState {
 
   @override
   List<Object?> get props => [message];
+}
+
+class NewsListMaxReached extends NewsListState {
+  final List<Article> articles;
+
+  const NewsListMaxReached({required this.articles});
+
+  @override
+  List<Object?> get props => [articles];
 }
