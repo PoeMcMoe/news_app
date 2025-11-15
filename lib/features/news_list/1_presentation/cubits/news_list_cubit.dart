@@ -12,6 +12,7 @@ class NewsListCubit extends Cubit<NewsListState> {
 
   final List<Article> _currentArticles = [];
   int _pageIndex = 1;
+  bool _isLoadingMore = false;
 
   NewsListCubit({required this.getArticleListUseCase}) : super(const NewsListLoading());
 
@@ -31,7 +32,7 @@ class NewsListCubit extends Cubit<NewsListState> {
 
       _currentArticles.addAll(articles);
 
-      emit(NewsListLoaded(articles: articles));
+      emit(NewsListLoaded(articles: _currentArticles));
     } catch (e) {
       debugPrint('NewsListCubit. fetchNewsList failed: $e');
       emit(
@@ -43,8 +44,12 @@ class NewsListCubit extends Cubit<NewsListState> {
   }
 
   Future<void> loadMoreNews() async {
-    if (_currentArticles.length >= _maxArticles) {
+    if (_isLoadingMore) return;
+    _isLoadingMore = true;
+
+    if (_currentArticles.length + _articlesPageSize >= _maxArticles) {
       emit(NewsListMaxReached(articles: _currentArticles));
+      _isLoadingMore = false;
       return;
     }
 
@@ -71,6 +76,8 @@ class NewsListCubit extends Cubit<NewsListState> {
           'Please check your connection and try again.',
         ),
       );
+    } finally {
+      _isLoadingMore = false;
     }
   }
 }

@@ -45,19 +45,22 @@ class _NewsListScreenBaseState extends State<_NewsListScreenBase> {
   }
 
   void _onScroll() {
-    final state = context.read<NewsListCubit>().state;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<NewsListCubit>().state;
 
-    if (_isNearBottom && state is! NewsListMaxReached && state is! NewsListLoadingMore) {
-      context.read<NewsListCubit>().loadMoreNews();
-    }
+      if (_isNearScrollBottom && state is! NewsListMaxReached) {
+        context.read<NewsListCubit>().loadMoreNews();
+      }
+    });
   }
 
-  bool get _isNearBottom {
+  bool get _isNearScrollBottom {
     if (!_scrollController.hasClients) return false;
-    final double maxScroll = _scrollController.position.maxScrollExtent;
-    final double currentScroll = _scrollController.position.pixels;
 
-    return currentScroll >= maxScroll - 200;
+    final double maxScrollExtent = _scrollController.position.maxScrollExtent;
+    final double offset = _scrollController.offset;
+
+    return maxScrollExtent > 0 && offset >= maxScrollExtent - 200;
   }
 
   @override
